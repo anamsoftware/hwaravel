@@ -47,7 +47,7 @@ Route::prefix(hwa_admin_dir())->name('admin.')->group(function () {
         // Forget and reset password
         Route::prefix('/password')->name('password.')->group(function () {
             Route::match(['get', 'post'], '/forget', [ResetPasswordController::class, 'forget'])->name('forget');
-            Route::match(['get', 'post'], '/reset', [ResetPasswordController::class, 'reset'])->name('reset');
+            Route::match(['get', 'post'], '/reset/{token}', [ResetPasswordController::class, 'reset'])->name('reset');
         });
     });
 

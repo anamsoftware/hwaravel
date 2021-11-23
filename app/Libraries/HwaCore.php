@@ -45,12 +45,29 @@ class HwaCore
                         'label' => 'Users',
                         'route' => '',
                     ],
+                    [
+                        'label' => 'System info',
+                        'route' => '',
+                    ],
                 ]
             ],
             [
                 'label' => 'Settings',
                 'icon' => 'bx-cog',
-                'route' => '',
+                'items' => [
+                    [
+                        'label' => 'General',
+                        'route' => '',
+                    ],
+                    [
+                        'label' => 'Email',
+                        'route' => '',
+                    ],
+                    [
+                        'label' => 'Social login',
+                        'route' => '',
+                    ],
+                ]
             ],
         ];
     }

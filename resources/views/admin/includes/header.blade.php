@@ -23,7 +23,7 @@
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img class="rounded-circle header-profile-user"
-                         src="{{ (isset($adminLogin['avatar']) && !empty($adminLogin['avatar'])) ? hwa_image_url("users", $adminLogin['avatar']) : "assets/images/users/avatar-1.jpg" }}"
+                         src="{{ (isset($adminLogin['avatar']) && !empty($adminLogin['avatar'])) ? hwa_image_url("users", $adminLogin['avatar']) : "assets/images/users/user.png" }}"
                          alt="Header Avatar">
                     <span class="d-none d-xl-inline-block ms-1">{{ $adminLogin['full_name'] ?? "System Admin" }}</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>

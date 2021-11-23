@@ -101,6 +101,23 @@ if (!function_exists('hwa_local_env')) {
     }
 }
 
+if (!function_exists('hwa_demo_env')) {
+
+    /**
+     * Get demo environment
+     *
+     * @return bool
+     */
+    function hwa_demo_env()
+    {
+        if (App::environment() == 'demo') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
 if (!function_exists('hwa_page_title')) {
 
     /**

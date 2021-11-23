@@ -20,7 +20,7 @@
                     <label for="username" class="form-label">Account: <span class="text-danger">*</span></label>
                     <input type="text" class="form-control {{ $errors->first('email') ? 'is-invalid' : '' }}"
                            id="username" name="email"
-                           value="{{ old('email') ?? (hwa_local_env() ? 'admin' : '') }}"
+                           value="{{ old('email') ?? ((hwa_demo_env() || hwa_local_env()) ? 'admin' : '') }}"
                            placeholder="Enter email/username">
                     @error('email')
                     <p class="text-danger mt-2">{{ $errors->first('email') }}</p>
@@ -35,7 +35,7 @@
                     <div class="input-group auth-pass-inputgroup">
                         <input type="password" class="form-control {{ $errors->first('password') ? 'is-invalid' : '' }}"
                                name="password"
-                               value="{{ old('password') ?? (hwa_local_env() ? 'admin123' : '') }}"
+                               value="{{ old('password') ?? ((hwa_demo_env() || hwa_local_env()) ? 'admin123' : '') }}"
                                placeholder="Enter password" aria-label="Password" aria-describedby="password-addon">
                         <button class="btn btn-light " type="button" id="password-addon"><i
                                 class="mdi mdi-eye-outline"></i></button>
@@ -47,7 +47,7 @@
 
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="remember-check"
-                           name="remember_me" {{ old('remember_me') == 'on' ? 'checked' : (hwa_local_env() ? 'checked' : '') }}>
+                           name="remember_me" {{ old('remember_me') == 'on' ? 'checked' : ((hwa_demo_env() || hwa_local_env()) ? 'checked' : '') }}>
                     <label class="form-check-label" for="remember-check">
                         Remember me
                     </label>

@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Notifications\Admin\RegisterUserRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -78,15 +80,34 @@ class RegisterController extends Controller
                     'password' => bcrypt($request['password']), // Hash
                 ];
 
-                // Create new user
-                if ($this->user->create($userData)) {
+                if (!hwa_demo_env()) {
+                    // Create new user
+                    if ($user = $this->user->create($userData)) {
+                        $dataSend = [
+                            'subject' => hwa_app_name() . " | Register new account",
+                            'first_name' => $user->first_name,
+                            'email' => $user->email,
+                            'password' => trim($request['password']),
+                        ];
+
+                        try {
+                            $user->notify(new RegisterUserRequest($dataSend));
+                        } catch (\Exception $exception) {
+                            Log::error($exception->getMessage());
+                        }
+
+                        // Notify and redirect to login page
+                        hwa_notify_success("Success to register new user.", ['title' => 'Success!', 'top' => true]);
+                        return redirect()->route("{$path}.login");
+                    } else {
+                        // Notify and redirect back
+                        hwa_notify_error("Error to register new user.", ['title' => 'Error!', 'top' => true]);
+                        return redirect()->back()->withInput();
+                    }
+                } else {
                     // Notify and redirect to login page
                     hwa_notify_success("Success to register new user.", ['title' => 'Success!', 'top' => true]);
                     return redirect()->route("{$path}.login");
-                } else {
-                    // Notify and redirect back
-                    hwa_notify_error("Error to register new user.", ['title' => 'Error!', 'top' => true]);
-                    return redirect()->back()->withInput();
                 }
             }
         }
