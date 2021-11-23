@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\Auth\ProfileController;
 use App\Http\Controllers\Admin\Auth\RegisterController;
+use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Client\DevController;
 use App\Http\Controllers\Client\HomeController;
@@ -36,24 +38,32 @@ Route::name('client.')->group(function () {
 */
 
 Route::prefix(hwa_admin_dir())->name('admin.')->group(function () {
+
     // Unauthenticated
     Route::prefix('/auth')->name('auth.')->group(function () {
-        // Login
-        Route::match(['get', 'post'], '/login', [LoginController::class, 'login'])->name('login');
-        // Register
-        Route::match(['get', 'post'], 'register', [RegisterController::class, 'register'])->name('register');
+        Route::match(['get', 'post'], '/login', [LoginController::class, 'login'])->name('login'); // Login
+        Route::match(['get', 'post'], 'register', [RegisterController::class, 'register'])->name('register'); // Register
 
+        // Forget and reset password
+        Route::prefix('/password')->name('password.')->group(function () {
+            Route::match(['get', 'post'], '/forget', [ResetPasswordController::class, 'forget'])->name('forget');
+            Route::match(['get', 'post'], '/reset', [ResetPasswordController::class, 'reset'])->name('reset');
+        });
     });
 
     // Authenticated
     Route::middleware('auth:admin')->group(function () {
-        // Dashboard
-        Route::get('/', [DashboardController::class, 'index'])->name('home');
+        Route::get('/', [DashboardController::class, 'index'])->name('home'); // Dashboard
 
         // Auth
         Route::prefix('/auth')->name('auth.')->group(function () {
-            // Logout
-            Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+            Route::get('/logout', [LoginController::class, 'logout'])->name('logout'); // Logout
+
+            // Profile group
+            Route::prefix('/profile')->name('profile.')->group(function () {
+                Route::match(['get', 'put'], '/', [ProfileController::class, 'profile'])->name('index'); // Update profile
+                Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('password'); // Chane password
+            });
         });
     });
 });

@@ -5,26 +5,35 @@
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        @include('admin.includes.header')
+    @include('admin.includes.header')
 
-        <!-- ========== Left Sidebar Start ========== -->
+    <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
 
             <div data-simplebar class="h-100">
 
-                <!--- Sidemenu -->
+                <!--- Side menu -->
                 <div id="sidebar-menu">
                     <!-- Left Menu Start -->
                     <ul class="metismenu list-unstyled" id="side-menu">
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="bx bx-store"></i>
-                                <span>Ecommerce</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="ecommerce-products.html">Products</a></li>
-                            </ul>
-                        </li>
+                        @foreach(hwaCore()->getAdminMenu() as $menu)
+                            <li>
+                                <a href="{{ (!isset($menu['items']) && !empty($menu['route'])) ? route("admin.{$menu['route']}") : 'javascript:void(0);' }}"
+                                   class="{{ isset($menu['items']) ? 'has-arrow' : '' }} waves-effect">
+                                    <i class="bx {{ $menu['icon'] }}"></i>
+                                    <span>{{ $menu['label'] }}</span>
+                                </a>
+                                @if(isset($menu['items']))
+                                    <ul class="sub-menu" aria-expanded="false">
+                                        @foreach($menu['items'] as $submenu)
+                                            <li>
+                                                <a href="{{ !empty($subMenu['route']) ? route("admin.{$subMenu['route']}") : 'javascript:void(0);' }}">{{ $submenu['label'] }}</a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
                 <!-- Sidebar -->
@@ -38,8 +47,8 @@
         <div class="main-content">
 
             <div class="page-content">
-                @yield('admin_content')
-                <!-- container-fluid -->
+            @yield('admin_content')
+            <!-- container-fluid -->
             </div>
             <!-- End Page-content -->
 
@@ -47,11 +56,11 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <script>document.write(new Date().getFullYear())</script> © Skote.
+                            Copyright {{ date('Y') }} © to <a href="{{ route('admin.home') }}"><b>{{ hwa_app_name() }}</b></a>.
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                                Design & Develop by Themesbrand
+                                Loading in {{ round((microtime(true) - LARAVEL_START), 2) }}s
                             </div>
                         </div>
                     </div>

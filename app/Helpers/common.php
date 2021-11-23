@@ -28,7 +28,7 @@ if (!function_exists('hwa_app_name')) {
      */
     function hwa_app_name()
     {
-        return trans('core.app_name') ?? 'Hwaravel';
+        return config('app.name') ?? 'Hwaravel';
     }
 }
 

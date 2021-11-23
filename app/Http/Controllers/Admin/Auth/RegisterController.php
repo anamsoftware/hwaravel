@@ -11,6 +11,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * Class RegisterController
+ * @package App\Http\Controllers\Admin\Auth
+ */
 class RegisterController extends Controller
 {
     protected $viewPath = 'admin.auth';
@@ -75,11 +79,15 @@ class RegisterController extends Controller
                 ];
 
                 // Create new user
-                $this->user->create($userData);
-
-                // Notify and redirect to login page
-                hwa_notify_success("Successfully to register new user.", ['title' => 'Success!', 'top' => true]);
-                return redirect()->route("{$path}.login");
+                if ($this->user->create($userData)) {
+                    // Notify and redirect to login page
+                    hwa_notify_success("Success to register new user.", ['title' => 'Success!', 'top' => true]);
+                    return redirect()->route("{$path}.login");
+                } else {
+                    // Notify and redirect back
+                    hwa_notify_error("Error to register new user.", ['title' => 'Error!', 'top' => true]);
+                    return redirect()->back()->withInput();
+                }
             }
         }
     }

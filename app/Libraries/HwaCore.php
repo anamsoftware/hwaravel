@@ -35,7 +35,22 @@ class HwaCore
             [
                 'label' => 'Dashboard',
                 'icon' => 'bx-home-circle',
-                'route' => ''
+                'route' => 'home'
+            ],
+            [
+                'label' => 'Administrators',
+                'icon' => 'bx-rocket',
+                'items' => [
+                    [
+                        'label' => 'Users',
+                        'route' => '',
+                    ],
+                ]
+            ],
+            [
+                'label' => 'Settings',
+                'icon' => 'bx-cog',
+                'route' => '',
             ],
         ];
     }

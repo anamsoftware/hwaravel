@@ -11,6 +11,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * Class LoginController
+ * @package App\Http\Controllers\Admin\Auth
+ */
 class LoginController extends Controller
 {
     protected const DASHBOARD = 'admin.home';
@@ -59,6 +63,7 @@ class LoginController extends Controller
                 $msg_ar = ['email.exists' => 'The email is not existed.',];
                 $credentials = ['email' => $request['email'], 'password' => $request['password']];
 
+                // Check existed user using email
                 $checkExisted = $this->user->findByEmail($credentials['email']);
             } else {
                 // Validate username
@@ -66,13 +71,13 @@ class LoginController extends Controller
                 $msg_ar = ['email.exists' => 'Username is not existed.',];
                 $credentials = ['username' => $request['email'], 'password' => $request['password']];
 
+                // Check existed user using username
                 $checkExisted = $this->user->findByUserName($credentials['username']);
             }
 
             // Validate
             $validator = Validator::make($request->all(), array_merge($validator_arr, [
                 'password' => ['required', 'min:6', 'max:191'],
-                'remember_me' => ['boolean'],
             ]), $msg_ar);
 
             if ($validator->fails()) {
@@ -80,9 +85,16 @@ class LoginController extends Controller
                 hwa_notify_error($validator->getMessageBag()->first(), ['top' => true, 'title' => 'Error!']);
                 return redirect()->back()->withInput()->withErrors($validator);
             } else {
+                // Get status remember
+                if ($request->has('remember_me')) {
+                    $remember = true;
+                } else {
+                    $remember = false;
+                }
+
                 if ($checkExisted && $checkExisted->active == 1) {
                     // User active
-                    if (auth()->guard('admin')->attempt($credentials)) {
+                    if (auth()->guard('admin')->attempt($credentials, $remember)) {
                         // Login successfully.
                         hwa_notify_success("Login successfully.", ['title' => 'Success!']);
                         return redirect()->route(self::DASHBOARD);
@@ -111,7 +123,9 @@ class LoginController extends Controller
     {
         // Logout using auth()
         auth()->guard('admin')->logout();
+
         // Redirect to login page
-        return redirect()->route($this->viewPath);
+        hwa_notify_success("Logout successfully.", ['title' => 'Success!', 'top' => true]);
+        return redirect()->route("{$this->viewPath}.logout");
     }
 }

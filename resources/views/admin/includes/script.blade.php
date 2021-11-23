@@ -7,5 +7,8 @@
 
 @yield('admin_script')
 
+@toastr_js
+@toastr_render
+
 <!-- App js -->
 <script src="assets/js/app.js"></script>

@@ -16,7 +16,7 @@ class Authenticate extends Middleware
     {
         if (! $request->expectsJson()) {
             if (request()->is(hwa_admin_dir() . '/*') || request()->is(hwa_admin_dir())) {
-                return route('admin.login');
+                return route('admin.auth.login');
             }
             return route('client.login');
         }
