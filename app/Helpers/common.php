@@ -32,6 +32,19 @@ if (!function_exists('hwa_app_name')) {
     }
 }
 
+if (!function_exists('hwa_app_version')) {
+
+    /**
+     * App name
+     *
+     * @return Repository|Application|mixed|string
+     */
+    function hwa_app_version()
+    {
+        return config('app.version') ?? '1.0.0';
+    }
+}
+
 if (!function_exists('hwa_app_author')) {
 
     /**

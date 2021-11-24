@@ -25,9 +25,9 @@
                                 </a>
                                 @if(isset($menu['items']))
                                     <ul class="sub-menu" aria-expanded="false">
-                                        @foreach($menu['items'] as $submenu)
+                                        @foreach($menu['items'] as $subMenu)
                                             <li>
-                                                <a href="{{ !empty($subMenu['route']) ? route("admin.{$subMenu['route']}") : 'javascript:void(0);' }}">{{ $submenu['label'] }}</a>
+                                                <a href="{{ !empty($subMenu['route']) ? route("admin.{$subMenu['route']}") : 'javascript:void(0);' }}">{{ $subMenu['label'] }}</a>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -56,7 +56,8 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            Copyright {{ date('Y') }} © to <a href="{{ route('admin.home') }}"><b>{{ hwa_app_name() }}</b></a>.
+                            Copyright {{ date('Y') }} © to <a
+                                href="{{ route('admin.home') }}"><b>{{ hwa_app_name() }}</b></a>.
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">

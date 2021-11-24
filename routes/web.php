@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\ProfileController;
 use App\Http\Controllers\Admin\Auth\RegisterController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Client\DevController;
 use App\Http\Controllers\Client\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -64,6 +65,10 @@ Route::prefix(hwa_admin_dir())->name('admin.')->group(function () {
                 Route::match(['get', 'put'], '/', [ProfileController::class, 'profile'])->name('index'); // Update profile
                 Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('password'); // Chane password
             });
+        });
+
+        Route::prefix('/system')->name('system.')->group(function () {
+            Route::get('/info', [SystemController::class, 'systemInfo'])->name('info');
         });
     });
 });

@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Hwaravel'),
 
+    'version' => env('APP_VERSION', '1.0.0'),
+
     'author' => env('APP_AUTHOR', 'Anam Software'),
 
     /*

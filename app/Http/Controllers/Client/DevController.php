@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class DevController extends Controller
 {
@@ -11,7 +13,7 @@ class DevController extends Controller
     {
         if ($key != '1998') abort(404);
         else {
-            dd(hwa_settings());
+            dd(hwaCore()->getPackagesAndDependencies(hwaCore()->getComposerArray()['require']));
         }
     }
 }
