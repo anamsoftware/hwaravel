@@ -11,14 +11,14 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'hwa:install';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Hwaravel Install';
 
     /**
      * Create a new command instance.
@@ -33,10 +33,28 @@ class InstallCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return int
+     * @return void
      */
     public function handle()
     {
-        return Command::SUCCESS;
+        $this->info('Info: Starting hwaravel installation...');
+        $this->info('');
+
+        // running `php artisan migrate`
+        if ($this->confirm("Step: Do you want to migrate all tables into database?", false)) {
+            $this->call('migrate:fresh');
+        }
+
+        $this->info('');
+        $this->info("Step: Import sample data...");
+        $this->call('db:seed');
+
+        // Create new user
+        if ($this->confirm("Step: Do you want to add a new user?", false)) {
+            $this->call('hwa:user:create');
+        }
+
+        $this->info('');
+        $this->info('Success: Install hwaravel successfully!');
     }
 }
