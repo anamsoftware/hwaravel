@@ -51,7 +51,7 @@ class HwaCore
                         'route' => '',
                     ],
                     [
-                        'label' => 'System info',
+                        'label' => 'System information',
                         'route' => 'system.info',
                     ],
                 ]

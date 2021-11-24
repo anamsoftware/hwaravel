@@ -19,7 +19,7 @@
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="{{ route('admin.home') }}"><span><i
                                             class="bx bxs-home-circle"></i> Dashboard</span></a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Platform Administration</li>
+                            <li class="breadcrumb-item active" aria-current="page">Administration</li>
                             <li class="breadcrumb-item active" aria-current="page">System information</li>
                         </ol>
                     </div>
