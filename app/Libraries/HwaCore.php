@@ -48,7 +48,7 @@ class HwaCore
                 'items' => [
                     [
                         'label' => 'Users',
-                        'route' => '',
+                        'route' => 'users.index',
                     ],
                     [
                         'label' => 'System information',

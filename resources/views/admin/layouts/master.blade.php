@@ -52,6 +52,29 @@
             </div>
             <!-- End Page-content -->
 
+            <!-- Transaction Modal -->
+            <div class="modal fade deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-top" role="document">
+                    <div class="modal-content">
+                        <form id="deleteForm" action="" method="post">
+                            @csrf
+                            @method('DELETE')
+                            <div class="modal-header" style="border: none;">
+
+                            </div>
+                            <div class="modal-body">
+                                <h5 class="text-center" id="deleteMessage"></h5>
+                            </div>
+                            <div class="modal-footer d-flex align-items-center justify-content-center" style="border: none">
+                                <button type="button" class="btn btn-warning me-2" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-danger"><i class="bx bx-trash"></i> Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- end modal -->
+
             <footer class="footer">
                 <div class="container-fluid">
                     <div class="row">

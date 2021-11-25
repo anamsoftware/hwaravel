@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Auth\RegisterController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SystemController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Client\DevController;
 use App\Http\Controllers\Client\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -70,5 +71,7 @@ Route::prefix(hwa_admin_dir())->name('admin.')->group(function () {
         Route::prefix('/system')->name('system.')->group(function () {
             Route::get('/info', [SystemController::class, 'systemInfo'])->name('info');
         });
+
+        Route::resource('/users', UserController::class);
     });
 });

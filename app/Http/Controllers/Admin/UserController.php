@@ -223,9 +223,9 @@ class UserController extends Controller
             $validator = Validator::make($request->all(), [
                 'first_name' => ['required', 'max:191'],
                 'last_name' => ['required', 'max:191'],
-                'username' => ['required', 'min:6', 'max:191', 'unique:users,username,' . $id],
+                'username' => ['required', 'max:191', 'unique:users,username,' . $id],
                 'email' => ['required', 'email', 'max:191', 'unique:users,email,' . $id],
-                'password' => ['required', 'min:6', 'max:32'],
+                'password' => ['nullable', 'min:6', 'max:32'],
                 'phone' => ['nullable', 'max:20'],
                 'gender' => ['nullable', Rule::in(['male', 'female'])],
                 'active' => ['required', Rule::in(['0', '1'])],
@@ -255,7 +255,7 @@ class UserController extends Controller
 
                 // Get user data
                 $data = [
-                    'first_name' => $request['fist_name'],
+                    'first_name' => $request['first_name'],
                     'last_name' => $request['last_name'],
                     'username' => $request['username'],
                     'email' => $request['email'],
