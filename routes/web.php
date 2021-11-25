@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\ProfileController;
 use App\Http\Controllers\Admin\Auth\RegisterController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Client\DevController;
@@ -68,10 +69,21 @@ Route::prefix(hwa_admin_dir())->name('admin.')->group(function () {
             });
         });
 
+        // System
         Route::prefix('/system')->name('system.')->group(function () {
             Route::get('/info', [SystemController::class, 'systemInfo'])->name('info');
         });
 
+        // Admin
         Route::resource('/users', UserController::class);
+
+        /**
+         * Setting module
+         */
+        Route::prefix('/settings')->name('settings.')->group(function () {
+            Route::match(['get', 'put'], '/', [SettingController::class, 'index'])->name('index'); // General settings
+            Route::match(['get', 'put'], '/email', [SettingController::class, 'email'])->name('email'); // Email setting
+            Route::match(['get', 'put'], '/social-login', [SettingController::class, 'socialLogin'])->name('social_login'); // Social login
+        });
     });
 });

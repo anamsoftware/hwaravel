@@ -62,15 +62,15 @@ class HwaCore
                 'items' => [
                     [
                         'label' => 'General',
-                        'route' => '',
+                        'route' => 'settings.index',
                     ],
                     [
                         'label' => 'Email',
-                        'route' => '',
+                        'route' => 'settings.email',
                     ],
                     [
                         'label' => 'Social login',
-                        'route' => '',
+                        'route' => 'settings.social_login',
                     ],
                 ]
             ],
