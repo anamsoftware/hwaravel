@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserMeta;
+use App\Notifications\Admin\RegisterUserRequest;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -12,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -114,57 +116,76 @@ class UserController extends Controller
             hwa_notify_error($validator->getMessageBag()->first(), ['title' => 'Error!']);
             return redirect()->back()->withInput()->withErrors($validator);
         } else {
-            // Get user password
-            $password = trim($request['password']);
+            if (!hwa_demo_env()) {
+                // Get user password
+                $password = trim($request['password']);
 
-            // Upload user image
-            $avatar = '';
-            if ($request->has('avatar')) {
-                $file = $request->file('avatar'); // Get file
-                // Rename image
-                $avatar = strtolower("hwa_" . md5(Str::random(12) . time() . Str::random(25)) . '.' . $file->getClientOriginalExtension());
-                // Save image to /public/storage/users
-                Image::make($file->getRealPath())->resize(720, 720)->save(hwa_image_path($this->imagePath, $avatar));
-            }
-
-            // Get user data
-            $data = [
-                'first_name' => $request['fist_name'],
-                'last_name' => $request['last_name'],
-                'username' => $request['username'],
-                'email' => $request['email'],
-                'password' => bcrypt($password),
-                'active' => $request['active'],
-            ];
-
-            // Get user meta data
-            $metaData = [
-                'phone' => $request['phone'],
-                'gender' => $request['gender'],
-                'avatar' => $avatar,
-            ];
-
-            if ($result = $this->user->create($data)) {
-                // Get new user id
-                $id = $result->id;
-
-                // Add user meta data
-                foreach ($metaData as $metaKey => $metaValue) {
-                    UserMeta::_add($id, $metaKey, $metaValue);
+                // Upload user image
+                $avatar = '';
+                if ($request->has('avatar')) {
+                    $file = $request->file('avatar'); // Get file
+                    // Rename image
+                    $avatar = strtolower("hwa_" . md5(Str::random(12) . time() . Str::random(25)) . '.' . $file->getClientOriginalExtension());
+                    // Save image to /public/storage/users
+                    Image::make($file->getRealPath())->resize(720, 720)->save(hwa_image_path($this->imagePath, $avatar));
                 }
 
+                // Get user data
+                $data = [
+                    'first_name' => $request['first_name'],
+                    'last_name' => $request['last_name'],
+                    'username' => $request['username'],
+                    'email' => $request['email'],
+                    'password' => bcrypt($password),
+                    'active' => $request['active'],
+                ];
+
+                // Get user meta data
+                $metaData = [
+                    'phone' => $request['phone'],
+                    'gender' => $request['gender'],
+                    'avatar' => $avatar,
+                ];
+
+                if ($result = $this->user->create($data)) {
+                    // Get new user id
+                    $id = $result->id;
+
+                    // Send notify to email
+                    try {
+                        $dataSend = [
+                            'subject' => hwa_app_name() . " | Success to add new account",
+                            'first_name' => $result->first_name,
+                            'email' => $result->email,
+                            'password' => $password,
+                        ];
+                        $result->notify(new RegisterUserRequest($dataSend));
+                    } catch (\Exception $exception) {
+                        Log::error($exception->getMessage());
+                    }
+
+                    // Add user meta data
+                    foreach ($metaData as $metaKey => $metaValue) {
+                        UserMeta::_add($id, $metaKey, $metaValue);
+                    }
+
+                    // Notice and return users list
+                    hwa_notify_success("Success to add new user.", ['title' => 'Success!']);
+                    return redirect()->route("{$path}.index");
+                } else {
+                    // Delete new image just upload
+                    if (file_exists($imagePath = hwa_image_path($this->imagePath, $avatar))) {
+                        File::delete($imagePath);
+                    }
+
+                    // Notice error and return back
+                    hwa_notify_error("Error to add new user.", ['title' => 'Error!']);
+                    return redirect()->back()->withInput();
+                }
+            } else {
                 // Notice and return users list
                 hwa_notify_success("Success to add new user.", ['title' => 'Success!']);
                 return redirect()->route("{$path}.index");
-            } else {
-                // Delete new image just upload
-                if (file_exists($imagePath = hwa_image_path($this->imagePath, $avatar))) {
-                    File::delete($imagePath);
-                }
-
-                // Notice error and return back
-                hwa_notify_error("Error to add new user.", ['title' => 'Error!']);
-                return redirect()->back()->withInput();
             }
         }
     }
@@ -236,67 +257,79 @@ class UserController extends Controller
                 hwa_notify_error($validator->getMessageBag()->first(), ['title' => 'Error!']);
                 return redirect()->back()->withInput()->withErrors($validator);
             } else {
-                // Get user image
-                $currentImage = $result['avatar'] ?? '';
-
-                // Upload user image
-                if ($request->has('avatar')) {
-                    $file = $request->file('avatar'); // Get file
-                    // Rename image
-                    $updateImage = strtolower("hwa_" . md5(Str::random(12) . time() . Str::random(25)) . '.' . $file->getClientOriginalExtension());
-                    // Save image to /public/storage/users
-                    Image::make($file->getRealPath())->resize(720, 720)->save(hwa_image_path($this->imagePath, $updateImage));
-                } else {
-                    $updateImage = $currentImage; // No file update
-                }
-
-                // Select user
-                $selectResult = $this->user->find($id);
-
-                // Get user data
-                $data = [
-                    'first_name' => $request['first_name'],
-                    'last_name' => $request['last_name'],
-                    'username' => $request['username'],
-                    'email' => $request['email'],
-                    'password' => !empty($request['password']) ? bcrypt($request['password']) : $selectResult['password'],
-                    'active' => $request['active'],
-                ];
-
-                // Get user meta data
-                $metaData = [
-                    'phone' => $request['phone'],
-                    'gender' => $request['gender'],
-                    'avatar' => $updateImage,
-                ];
-
-                if ($selectResult->fill($data)->save()) {
-                    // delete old image
-                    if ($request->has('avatar')) {
-                        if (file_exists($imagePath = hwa_image_path($this->imagePath, $currentImage))) {
-                            File::delete($imagePath);
-                        }
-                    }
-
-                    // Update user meta data
-                    foreach ($metaData as $metaKey => $metaValue) {
-                        UserMeta::_update($id, $metaKey, $metaValue);
-                    }
-
-                    // Notice and return users list
-                    hwa_notify_success("Success to update user.", ['title' => 'Success!']);
-                    return redirect()->route("{$path}.index");
-                } else {
-                    // Delete new image just upload
-                    if ($request->has('avatar')) {
-                        if (file_exists($imagePath = hwa_image_path($this->imagePath, $updateImage))) {
-                            File::delete($imagePath);
-                        }
-                    }
-
-                    // Notice error and return back
-                    hwa_notify_error("Error to update user.", ['title' => 'Error!']);
+                if (auth()->guard('admin')->id() == $id) {
+                    // notify error
+                    hwa_notify_error("Can't deactivate this user. This user is logged on!", ['title' => 'Error!']);
                     return redirect()->back()->withInput();
+                } else {
+                    if (!hwa_demo_env()) {
+                        // Get user image
+                        $currentImage = $result['avatar'] ?? '';
+
+                        // Upload user image
+                        if ($request->has('avatar')) {
+                            $file = $request->file('avatar'); // Get file
+                            // Rename image
+                            $updateImage = strtolower("hwa_" . md5(Str::random(12) . time() . Str::random(25)) . '.' . $file->getClientOriginalExtension());
+                            // Save image to /public/storage/users
+                            Image::make($file->getRealPath())->resize(720, 720)->save(hwa_image_path($this->imagePath, $updateImage));
+                        } else {
+                            $updateImage = $currentImage; // No file update
+                        }
+
+                        // Select user
+                        $selectResult = $this->user->find($id);
+
+                        // Get user data
+                        $data = [
+                            'first_name' => $request['first_name'],
+                            'last_name' => $request['last_name'],
+                            'username' => $request['username'],
+                            'email' => $request['email'],
+                            'password' => !empty($request['password']) ? bcrypt($request['password']) : $selectResult['password'],
+                            'active' => $request['active'],
+                        ];
+
+                        // Get user meta data
+                        $metaData = [
+                            'phone' => $request['phone'],
+                            'gender' => $request['gender'],
+                            'avatar' => $updateImage,
+                        ];
+
+                        if ($selectResult->fill($data)->save()) {
+                            // delete old image
+                            if ($request->has('avatar')) {
+                                if (file_exists($imagePath = hwa_image_path($this->imagePath, $currentImage))) {
+                                    File::delete($imagePath);
+                                }
+                            }
+
+                            // Update user meta data
+                            foreach ($metaData as $metaKey => $metaValue) {
+                                UserMeta::_update($id, $metaKey, $metaValue);
+                            }
+
+                            // Notice and return users list
+                            hwa_notify_success("Success to update user.", ['title' => 'Success!']);
+                            return redirect()->route("{$path}.index");
+                        } else {
+                            // Delete new image just upload
+                            if ($request->has('avatar')) {
+                                if (file_exists($imagePath = hwa_image_path($this->imagePath, $updateImage))) {
+                                    File::delete($imagePath);
+                                }
+                            }
+
+                            // Notice error and return back
+                            hwa_notify_error("Error to update user.", ['title' => 'Error!']);
+                            return redirect()->back()->withInput();
+                        }
+                    } else {
+                        // Notice and return users list
+                        hwa_notify_success("Success to update user.", ['title' => 'Success!']);
+                        return redirect()->route("{$path}.index");
+                    }
                 }
             }
         }
@@ -314,22 +347,32 @@ class UserController extends Controller
             // User not found
             abort(404);
         } else {
-            // Get user image
-            $avatar = $result['avatar'] ?? '';
-
-            // Select user
-            $selectResult = $this->user->find($id);
-
-            if ($selectResult->delete()) {
-                // Delete success
-                if (file_exists($path = hwa_image_path("users", $avatar))) {
-                    File::delete($path); // Delete user image
-                }
-                // notify success
-                hwa_notify_success("Success to delete user.", ['title' => 'Success!']);
-            } else {
+            if (auth()->guard('admin')->id() == $id) {
                 // notify error
-                hwa_notify_error("Error to delete user.", ['title' => 'Error!']);
+                hwa_notify_error("Can't delete this user. This user is logged on!", ['title' => 'Error!']);
+            } else {
+                if (!hwa_demo_env()) {
+                    // Get user image
+                    $avatar = $result['avatar'] ?? '';
+
+                    // Select user
+                    $selectResult = $this->user->find($id);
+
+                    if ($selectResult->delete()) {
+                        // Delete success
+                        if (file_exists($path = hwa_image_path("users", $avatar))) {
+                            File::delete($path); // Delete user image
+                        }
+                        // notify success
+                        hwa_notify_success("Success to delete user.", ['title' => 'Success!']);
+                    } else {
+                        // notify error
+                        hwa_notify_error("Error to delete user.", ['title' => 'Error!']);
+                    }
+                } else {
+                    // notify success
+                    hwa_notify_success("Success to delete user.", ['title' => 'Success!']);
+                }
             }
             return redirect()->back();
         }
