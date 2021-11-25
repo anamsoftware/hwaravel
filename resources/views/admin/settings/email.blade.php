@@ -54,13 +54,13 @@
                                         @enderror
                                     </div>
 
-                                    <div class="smtp box" style="display: none;">
+                                    <div class="smtp" style="display: none;">
                                         <div class="mb-3">
                                             <label for="email_port">Port:</label>
                                             <input type="number"
                                                    class="form-control {{ $errors->has('email_port') ? 'is-invalid' : '' }}"
                                                    name="email_port" id="email_port" placeholder="Enter port"
-                                                   value="{{ old('email_port') }}">
+                                                   value="{{ old('email_port', 587) }}">
                                             @error('email_port')
                                             <p class="text-danger mt-2">{{ $errors->first('email_port') }}</p>
                                             @enderror
@@ -71,7 +71,7 @@
                                             <input type="text"
                                                    class="form-control {{ $errors->has('email_host') ? 'is-invalid' : '' }}"
                                                    name="email_host" id="email_host" placeholder="Ex: smtp.gmail.com"
-                                                   value="{{ old('email_host') }}">
+                                                   value="{{ old('email_host', 'smtp.mailgun.org') }}">
                                             @error('email_host')
                                             <p class="text-danger mt-2">{{ $errors->first('email_host') }}</p>
                                             @enderror
@@ -120,7 +120,7 @@
                                     </div>
                                     <!-- end smtp -->
 
-                                    <div class="mail_gun box" style="display: none;">
+                                    <div class="mailgun" style="display: none;">
                                         <div class="mb-3">
                                             <label for="email_mail_gun_domain">Domain:</label>
                                             <input type="text"
@@ -153,7 +153,7 @@
                                                    class="form-control {{ $errors->has('email_mail_gun_endpoint') ? 'is-invalid' : '' }}"
                                                    name="email_mail_gun_endpoint" id="email_mail_gun_endpoint"
                                                    placeholder="Enter endpoint"
-                                                   value="{{ old('email_mail_gun_endpoint') }}">
+                                                   value="{{ old('email_mail_gun_endpoint', 'api.mailgun.net') }}">
                                             @error('email_mail_gun_endpoint')
                                             <p class="text-danger mt-2">{{ $errors->first('email_mail_gun_endpoint') }}</p>
                                             @enderror
@@ -161,7 +161,7 @@
                                     </div>
                                     <!-- end mail gun -->
 
-                                    <div class="ses box" style="display: none;">
+                                    <div class="ses" style="display: none;">
                                         <div class="mb-3">
                                             <label for="email_ses_key">Key:</label>
                                             <input type="text"
@@ -194,7 +194,7 @@
                                                    class="form-control {{ $errors->has('email_ses_region') ? 'is-invalid' : '' }}"
                                                    name="email_ses_region" id="email_ses_region"
                                                    placeholder="Enter region"
-                                                   value="{{ old('email_ses_region') }}">
+                                                   value="{{ old('email_ses_region', 'us-east-1') }}">
                                             @error('email_ses_region')
                                             <p class="text-danger mt-2">{{ $errors->first('email_ses_region') }}</p>
                                             @enderror
@@ -220,7 +220,7 @@
                                                class="form-control {{ $errors->has('email_from_address') ? 'is-invalid' : '' }}"
                                                name="email_from_address" id="email_from_address"
                                                placeholder="Enter sender email"
-                                               value="{{ old('email_from_address') }}">
+                                               value="{{ old('email_from_address', 'hello@example.com') }}">
                                         @error('email_from_address')
                                         <p class="text-danger mt-2">{{ $errors->first('email_from_address') }}</p>
                                         @enderror
@@ -248,24 +248,31 @@
 @section('admin_script')
     <script type="text/javascript">
         $(document).ready(function () {
-
+            let option = $("#email_driver").find("option:selected").val();
+            if (option === 'smtp'){
+                $(".smtp").show();
+            } else if (option === 'mailgun'){
+                $(".mailgun").show();
+            } else if (option === 'ses'){
+                $(".ses").show();
+            }
         });
 
         $("#email_driver").change(function () {
-            $(this).find("option:selected").each(function () {
-                window.onunload = unloadPage;
-                function unloadPage(){
-                    $('#email_driver').find('option:first').attr('selected', 'selected');
-                }
-
-                if ($(this).attr("value") == "smtp") {
-                    $(".box").not(".smtp").hide();
-                } else if ($(this).attr("value") == "mailgun") {
-                    $(".box").not(".mailgun").hide();
-                } else if ($(this).attr("value") == "ses") {
-                    $(".box").not(".ses").hide();
-                }
-            })
+            let option = $("#email_driver").find("option:selected").val();
+            if (option === 'smtp'){
+                $(".smtp").show();
+                $(".mailgun").hide();
+                $(".ses").hide();
+            } else if (option === 'mailgun'){
+                $(".smtp").hide();
+                $(".mailgun").show();
+                $(".ses").hide();
+            } else if (option === 'ses'){
+                $(".smtp").hide();
+                $(".mailgun").hide();
+                $(".ses").show();
+            }
         });
     </script>
 @endsection

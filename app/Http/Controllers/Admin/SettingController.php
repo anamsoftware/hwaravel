@@ -29,7 +29,7 @@ class SettingController extends Controller
                 'path' => $path
             ]);
         } else {
-
+            dd($request->all());
         }
     }
 
