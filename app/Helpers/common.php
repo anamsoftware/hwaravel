@@ -1,6 +1,7 @@
 <?php
 
 use App\Libraries\HwaCore;
+use App\Models\Setting;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\App;
@@ -14,7 +15,8 @@ if (!function_exists('hwaCore')) {
     /**
      * @return HwaCore
      */
-    function hwaCore() {
+    function hwaCore()
+    {
         return HwaCore::instance();
     }
 }
@@ -477,9 +479,29 @@ if (!function_exists('hwa_settings')) {
         try {
             $settings = DB::table('settings')->get(['key', 'value'])->toArray();
             return array_combine(array_column($settings, 'key'), array_column($settings, 'value'));
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return [];
         }
     }
 }
 
+if (!function_exists('hwa_setting')) {
+
+    /**
+     * @param null $key
+     * @param null $default
+     * @return false|mixed|null
+     */
+    function hwa_setting($key = null, $default = null)
+    {
+        if (!empty($key)) {
+            try {
+                $setting = Setting::where('key', $key)->first();
+                return $setting['value'];
+            } catch (Exception $exception) {
+                return $default;
+            }
+        }
+        return false;
+    }
+}

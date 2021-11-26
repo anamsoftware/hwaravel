@@ -45,9 +45,9 @@
                                         <label for="email_driver">Mailer:</label>
                                         <select name="email_driver" id="email_driver"
                                                 class="form-control {{ $errors->has('email_driver') ? 'is-invalid' : '' }}">
-                                            <option value="smtp">SMTP</option>
-                                            <option value="mailgun">Mailgun</option>
-                                            <option value="ses">SES</option>
+                                            <option value="smtp" @if(hwa_setting('email_driver', config('mail.default')) == 'smtp') selected @endif>SMTP</option>
+                                            <option value="mailgun" @if(hwa_setting('email_driver', config('mail.default')) == 'mailgun') selected @endif>Mailgun</option>
+                                            <option value="ses" @if(hwa_setting('email_driver', config('mail.default')) == 'ses') selected @endif>SES</option>
                                         </select>
                                         @error('email_driver')
                                         <p class="text-danger mt-2">{{ $errors->first('email_driver') }}</p>
@@ -60,7 +60,7 @@
                                             <input type="number"
                                                    class="form-control {{ $errors->has('email_port') ? 'is-invalid' : '' }}"
                                                    name="email_port" id="email_port" placeholder="Enter port"
-                                                   value="{{ old('email_port', 587) }}">
+                                                   value="{{ old('email_port') ?? hwa_setting('email_port', config('mail.mailers.smtp.port')) }}">
                                             @error('email_port')
                                             <p class="text-danger mt-2">{{ $errors->first('email_port') }}</p>
                                             @enderror
@@ -71,7 +71,7 @@
                                             <input type="text"
                                                    class="form-control {{ $errors->has('email_host') ? 'is-invalid' : '' }}"
                                                    name="email_host" id="email_host" placeholder="Ex: smtp.gmail.com"
-                                                   value="{{ old('email_host', 'smtp.mailgun.org') }}">
+                                                   value="{{ old('email_host') ?? hwa_setting('email_host', config('mail.mailers.smtp.host')) }}">
                                             @error('email_host')
                                             <p class="text-danger mt-2">{{ $errors->first('email_host') }}</p>
                                             @enderror
@@ -83,7 +83,7 @@
                                                    class="form-control {{ $errors->has('email_username') ? 'is-invalid' : '' }}"
                                                    name="email_username" id="email_username"
                                                    placeholder="Username to login to mail server"
-                                                   value="{{ old('email_username') }}">
+                                                   value="{{ old('email_username') ?? hwa_setting('email_username', config('mail.mailers.smtp.username')) }}">
                                             @error('email_username')
                                             <p class="text-danger mt-2">{{ $errors->first('email_username') }}</p>
                                             @enderror
@@ -95,7 +95,7 @@
                                                 <input type="password"
                                                        class="form-control {{ $errors->first('email_password') ? 'is-invalid' : '' }}"
                                                        name="email_password"
-                                                       value="{{ old('email_password') }}"
+                                                       value="{{ old('email_password') ?? hwa_setting('email_password', config('mail.mailers.smtp.password')) }}"
                                                        placeholder="Password to login to mail server"
                                                        aria-label="Password" aria-describedby="password-addon">
                                                 <button class="btn btn-light " type="button" id="password-addon"><i
@@ -112,7 +112,7 @@
                                                    class="form-control {{ $errors->has('email_encryption') ? 'is-invalid' : '' }}"
                                                    name="email_encryption" id="email_encryption"
                                                    placeholder="Encryption: ssl or tls"
-                                                   value="{{ old('email_encryption') }}">
+                                                   value="{{ old('email_encryption') ?? hwa_setting('email_encryption', config('mail.mailers.smtp.encryption')) }}">
                                             @error('email_encryption')
                                             <p class="text-danger mt-2">{{ $errors->first('email_encryption') }}</p>
                                             @enderror
@@ -127,7 +127,7 @@
                                                    class="form-control {{ $errors->has('email_mail_gun_domain') ? 'is-invalid' : '' }}"
                                                    name="email_mail_gun_domain" id="email_mail_gun_domain"
                                                    placeholder="Enter domain"
-                                                   value="{{ old('email_mail_gun_domain') }}">
+                                                   value="{{ old('email_mail_gun_domain') ?? hwa_setting('email_mail_gun_domain', config('services.mailgun.domain')) }}">
                                             @error('email_mail_gun_domain')
                                             <p class="text-danger mt-2">{{ $errors->first('email_mail_gun_domain') }}</p>
                                             @enderror
@@ -140,7 +140,7 @@
                                                        class="form-control {{ $errors->has('email_mail_gun_secret') ? 'is-invalid' : '' }}"
                                                        name="email_mail_gun_secret" id="email_mail_gun_secret"
                                                        placeholder="Enter secret"
-                                                       value="{{ old('email_mail_gun_secret') }}">
+                                                       value="{{ old('email_mail_gun_secret') ?? hwa_setting('email_mail_gun_secret', config('services.mailgun.secret')) }}">
                                                 @error('email_mail_gun_secret')
                                                 <p class="text-danger mt-2">{{ $errors->first('email_mail_gun_secret') }}</p>
                                                 @enderror
@@ -153,7 +153,7 @@
                                                    class="form-control {{ $errors->has('email_mail_gun_endpoint') ? 'is-invalid' : '' }}"
                                                    name="email_mail_gun_endpoint" id="email_mail_gun_endpoint"
                                                    placeholder="Enter endpoint"
-                                                   value="{{ old('email_mail_gun_endpoint', 'api.mailgun.net') }}">
+                                                   value="{{ old('email_mail_gun_endpoint') ?? hwa_setting('email_mail_gun_endpoint', config('services.mailgun.endpoint')) }}">
                                             @error('email_mail_gun_endpoint')
                                             <p class="text-danger mt-2">{{ $errors->first('email_mail_gun_endpoint') }}</p>
                                             @enderror
@@ -168,7 +168,7 @@
                                                    class="form-control {{ $errors->has('email_ses_key') ? 'is-invalid' : '' }}"
                                                    name="email_ses_key" id="email_ses_key"
                                                    placeholder="Enter key"
-                                                   value="{{ old('email_ses_key') }}">
+                                                   value="{{ old('email_ses_key') ?? hwa_setting('email_ses_key', config('services.ses.key')) }}">
                                             @error('email_ses_key')
                                             <p class="text-danger mt-2">{{ $errors->first('email_ses_key') }}</p>
                                             @enderror
@@ -181,7 +181,7 @@
                                                        class="form-control {{ $errors->has('email_ses_secret') ? 'is-invalid' : '' }}"
                                                        name="email_ses_secret" id="email_ses_secret"
                                                        placeholder="Enter secret"
-                                                       value="{{ old('email_ses_secret') }}">
+                                                       value="{{ old('email_ses_secret') ?? hwa_setting('email_ses_secret', config('services.ses.secret')) }}">
                                                 @error('email_ses_secret')
                                                 <p class="text-danger mt-2">{{ $errors->first('email_ses_secret') }}</p>
                                                 @enderror
@@ -194,7 +194,7 @@
                                                    class="form-control {{ $errors->has('email_ses_region') ? 'is-invalid' : '' }}"
                                                    name="email_ses_region" id="email_ses_region"
                                                    placeholder="Enter region"
-                                                   value="{{ old('email_ses_region', 'us-east-1') }}">
+                                                   value="{{ old('email_ses_region') ?? hwa_setting('email_ses_region', config('services.ses.region')) }}">
                                             @error('email_ses_region')
                                             <p class="text-danger mt-2">{{ $errors->first('email_ses_region') }}</p>
                                             @enderror
@@ -208,7 +208,7 @@
                                                class="form-control {{ $errors->has('email_from_name') ? 'is-invalid' : '' }}"
                                                name="email_from_name" id="email_from_name"
                                                placeholder="Enter sender name"
-                                               value="{{ old('email_from_name', hwa_app_name()) }}">
+                                               value="{{ old('email_from_name') ?? hwa_setting('email_from_name', config('mail.from.name')) }}">
                                         @error('email_from_name')
                                         <p class="text-danger mt-2">{{ $errors->first('email_from_name') }}</p>
                                         @enderror
@@ -220,7 +220,7 @@
                                                class="form-control {{ $errors->has('email_from_address') ? 'is-invalid' : '' }}"
                                                name="email_from_address" id="email_from_address"
                                                placeholder="Enter sender email"
-                                               value="{{ old('email_from_address', 'hello@example.com') }}">
+                                               value="{{ old('email_from_address') ?? hwa_setting('email_from_address', config('mail.from.address')) }}">
                                         @error('email_from_address')
                                         <p class="text-danger mt-2">{{ $errors->first('email_from_address') }}</p>
                                         @enderror
@@ -232,8 +232,12 @@
 
                     <div class="row mb-3">
                         <div class="col-sm-12">
-                        @include('admin.includes.form_button')
-                        <!-- End button -->
+                            <div class="mb-3 mt-3 text-center justify-content-center">
+                                <button type="submit"
+                                        class="btn btn-success waves-effect waves-light"><i
+                                        class="bx bx-check-double font-size-16 align-middle me-2"></i> Save
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <!-- End row -->
@@ -246,33 +250,5 @@
 @endsection
 
 @section('admin_script')
-    <script type="text/javascript">
-        $(document).ready(function () {
-            let option = $("#email_driver").find("option:selected").val();
-            if (option === 'smtp'){
-                $(".smtp").show();
-            } else if (option === 'mailgun'){
-                $(".mailgun").show();
-            } else if (option === 'ses'){
-                $(".ses").show();
-            }
-        });
-
-        $("#email_driver").change(function () {
-            let option = $("#email_driver").find("option:selected").val();
-            if (option === 'smtp'){
-                $(".smtp").show();
-                $(".mailgun").hide();
-                $(".ses").hide();
-            } else if (option === 'mailgun'){
-                $(".smtp").hide();
-                $(".mailgun").show();
-                $(".ses").hide();
-            } else if (option === 'ses'){
-                $(".smtp").hide();
-                $(".mailgun").hide();
-                $(".ses").show();
-            }
-        });
-    </script>
+    <script src="assets/js/hwa/email-setting.js"></script>
 @endsection

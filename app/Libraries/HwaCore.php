@@ -215,4 +215,18 @@ class HwaCore
         return !empty(Request::server('HTTPS')) && Request::server('HTTPS') != 'off';
     }
 
+    /**
+     * Mail driver
+     *
+     * @return string[]
+     */
+    public function getEmailDriver()
+    {
+        return [
+            'smtp',
+            'mailgun',
+            'ses',
+        ];
+    }
+
 }

@@ -13,7 +13,7 @@ class DevController extends Controller
     {
         if ($key != '1998') abort(404);
         else {
-            dd(hwaCore()->getPackagesAndDependencies(hwaCore()->getComposerArray()['require']));
+            dd(config('mail.mailers.smtp.port'));
         }
     }
 }
