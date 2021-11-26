@@ -10,7 +10,9 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Intervention\Image\Facades\Image;
 
 class SettingController extends Controller
 {
@@ -24,7 +26,35 @@ class SettingController extends Controller
                 'path' => $path
             ]);
         } else {
+            $validator = Validator::make($request->all(), [
+                'admin_email' => ['nullable', 'email'],
+                'time_zone' => ['nullable', Rule::in(array_keys(hwa_timezone_list()))],
+                'enable_captcha' => ['nullable', Rule::in(['0', '1'])],
+                'captcha_type' => ['nullable', Rule::in(['v2', 'v3'])],
+            ]);
 
+            if ($validator->fails()) {
+                // Invalid data and notice error message
+                hwa_notify_error($validator->getMessageBag()->first(), ['title' => 'Error!']);
+                return redirect()->back()->withInput()->withErrors($validator);
+            } else {
+                if (!hwa_demo_env()) {
+                    $favicon = $this->uploadImage($request, 'favicon');
+                    $smallLogo = $this->uploadImage($request, 'admin_logo_small');
+                    $logo = $this->uploadImage($request, 'admin_logo');
+                    $auth_bg = $this->uploadImage($request, 'auth_bg');
+
+                    dd($favicon);
+
+                    // Notice success
+                    hwa_notify_success("Success to update settings.", ['title' => 'Success!']);
+                    return redirect()->back();
+                } else {
+                    // Notice success
+                    hwa_notify_success("Success to update settings.", ['title' => 'Success!']);
+                    return redirect()->back();
+                }
+            }
         }
     }
 
@@ -110,5 +140,23 @@ class SettingController extends Controller
                 'value' => $settingValue
             ]);
         }
+    }
+
+    /**
+     * Upload image
+     *
+     * @param $request
+     * @param $key
+     * @return string
+     */
+    private function uploadImage($request, $key)
+    {
+        $name = "";
+        if ($request->hasFile($key)) {
+            $file = $request->file($key);
+            $name = strtolower("hwa_" . md5(Str::random(20) . time() . Str::random(20)) . '.' . $file->getClientOriginalExtension());
+            Image::make($file->getRealPath())->save(hwa_image_path("system", $name));
+        }
+        return $name;
     }
 }
