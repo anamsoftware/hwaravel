@@ -18,6 +18,13 @@ class SettingController extends Controller
 {
     protected $viewPath = 'admin.settings';
 
+    /**
+     * General Settings
+     *
+     * @param Request $request
+     * @return Application|Factory|View|RedirectResponse
+     * @throws \Exception
+     */
     public function index(Request $request)
     {
         $path = $this->viewPath;
