@@ -30,7 +30,8 @@
 
         <div class="row d-flex justify-content-sm-center">
             <div class="col-sm-9">
-                <form action="{{ route("{$path}.index") }}" class="form-horizontal" method="post">
+                <form action="{{ route("{$path}.index") }}" class="form-horizontal" method="post"
+                      enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="row">
@@ -58,7 +59,7 @@
                                         <input type="email"
                                                class="form-control {{ $errors->has('admin_email') ? 'is-invalid' : '' }}"
                                                name="admin_email" id="admin_email"
-                                               placeholder="Enter admin email"
+                                               placeholder="{{ "email@" . hwa_app_domain() }}"
                                                value="{{ old('admin_email') ?? hwa_setting('admin_email') }}">
                                         @error('admin_email')
                                         <p class="text-danger mt-2">{{ $errors->first('admin_email') }}</p>
@@ -100,7 +101,7 @@
                                             <div class="mb-3">
                                                 <label for="favicon">Favicon:</label>
                                                 <input type="file" class="dropify"
-                                                       name="favicon" {{ hwa_setting('favicon') ? 'data-default-file=' . hwa_image_url("system", $setting['favicon']) : "" }}>
+                                                       name="favicon" {{ hwa_setting('favicon') ? 'data-default-file=' . hwa_image_url("system", hwa_setting('favicon')) : "" }}>
                                                 @error('favicon')
                                                 <p class="text-danger mt-2">{{ $errors->first('favicon') }}</p>
                                                 @enderror
@@ -111,7 +112,7 @@
                                             <div class="mb-3">
                                                 <label for="admin_logo_small">Admin small logo:</label>
                                                 <input type="file" class="dropify"
-                                                       name="admin_logo_small" {{ hwa_setting('admin_logo_small') ? 'data-default-file=' . hwa_image_url("system", $setting['admin_logo_small']) : "" }}>
+                                                       name="admin_logo_small" {{ hwa_setting('admin_logo_small') ? 'data-default-file=' . hwa_image_url("system", hwa_setting('admin_logo_small')) : "" }}>
                                                 @error('admin_logo_small')
                                                 <p class="text-danger mt-2">{{ $errors->first('admin_logo_small') }}</p>
                                                 @enderror
@@ -124,7 +125,7 @@
                                             <div class="mb-3">
                                                 <label for="admin_logo">Admin logo:</label>
                                                 <input type="file" class="dropify"
-                                                       name="admin_logo" {{ hwa_setting('admin_logo') ? 'data-default-file=' . hwa_image_url("system", $setting['admin_logo']) : "" }}>
+                                                       name="admin_logo" {{ hwa_setting('admin_logo') ? 'data-default-file=' . hwa_image_url("system", hwa_setting('admin_logo')) : "" }}>
                                                 @error('admin_logo')
                                                 <p class="text-danger mt-2">{{ $errors->first('admin_logo') }}</p>
                                                 @enderror
@@ -135,7 +136,7 @@
                                             <div class="mb-3">
                                                 <label for="auth_bg">Login admin background image:</label>
                                                 <input type="file" class="dropify"
-                                                       name="auth_bg" {{ hwa_setting('auth_bg') ? 'data-default-file=' . hwa_image_url("system", $setting['auth_bg']) : "" }}>
+                                                       name="auth_bg" {{ hwa_setting('auth_bg') ? 'data-default-file=' . hwa_image_url("system", hwa_setting('auth_bg')) : "" }}>
                                                 @error('auth_bg')
                                                 <p class="text-danger mt-2">{{ $errors->first('auth_bg') }}</p>
                                                 @enderror
@@ -187,13 +188,15 @@
                                                 <input class="form-check-input" type="radio" name="captcha_type"
                                                        value="v2" id="captcha_type_1"
                                                        @if(hwa_setting('captcha_type', 'v2') == 'v2') checked @endif>
-                                                <label class="form-check-label" for="captcha_type_1">V2 (Verify requests with a challenge)</label>
+                                                <label class="form-check-label" for="captcha_type_1">V2 (Verify requests
+                                                    with a challenge)</label>
                                             </div>
                                             <div class="form-check mb-3 form-check-inline">
                                                 <input class="form-check-input" type="radio" name="captcha_type"
                                                        value="v3" id="captcha_type_2"
                                                        @if(hwa_setting('captcha_type', 'v2') == 'v3') checked @endif>
-                                                <label class="form-check-label" for="captcha_type_2">V3 (Verify requests with a score)</label>
+                                                <label class="form-check-label" for="captcha_type_2">V3 (Verify requests
+                                                    with a score)</label>
                                             </div>
                                         </div>
                                         @error('captcha_type')

@@ -44,16 +44,26 @@ class SettingController extends Controller
                     $logo = $this->uploadImage($request, 'admin_logo');
                     $auth_bg = $this->uploadImage($request, 'auth_bg');
 
-                    dd($favicon);
+                    $generalSettings = [
+                        "admin_title" => strtolower(trim($request['admin_title'])),
+                        "admin_email" => strtolower(trim($request['admin_email'])),
+                        "time_zone" => trim($request['time_zone']),
+                        "favicon" => $favicon,
+                        "admin_logo_small" => $smallLogo,
+                        "admin_logo" => $logo,
+                        "auth_bg" => $auth_bg,
+                        "email_from_name" => trim($request['email_from_name']),
+                        "enable_captcha" => trim($request['enable_captcha']),
+                        "captcha_type" => trim($request['captcha_type']),
+                        "captcha_site_key" => trim($request['captcha_site_key']),
+                        "captcha_secret" => trim($request['captcha_secret']),
+                    ];
 
-                    // Notice success
-                    hwa_notify_success("Success to update settings.", ['title' => 'Success!']);
-                    return redirect()->back();
-                } else {
-                    // Notice success
-                    hwa_notify_success("Success to update settings.", ['title' => 'Success!']);
-                    return redirect()->back();
+                    $this->saveSettings($generalSettings);
                 }
+                // Notice success
+                hwa_notify_success("Success to update settings.", ['title' => 'Success!']);
+                return redirect()->back();
             }
         }
     }
@@ -151,11 +161,12 @@ class SettingController extends Controller
      */
     private function uploadImage($request, $key)
     {
-        $name = "";
         if ($request->hasFile($key)) {
             $file = $request->file($key);
             $name = strtolower("hwa_" . md5(Str::random(20) . time() . Str::random(20)) . '.' . $file->getClientOriginalExtension());
             Image::make($file->getRealPath())->save(hwa_image_path("system", $name));
+        } else {
+            $name = hwa_setting($key);
         }
         return $name;
     }
