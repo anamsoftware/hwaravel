@@ -497,6 +497,9 @@ if (!function_exists('hwa_setting')) {
         if (!empty($key)) {
             try {
                 $setting = Setting::where('key', $key)->first();
+                if (empty($setting['value'])) {
+                    return $default;
+                }
                 return $setting['value'];
             } catch (Exception $exception) {
                 return $default;

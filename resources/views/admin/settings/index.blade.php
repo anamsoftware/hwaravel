@@ -187,14 +187,14 @@
                                             <div class="form-check mb-3 form-check-inline">
                                                 <input class="form-check-input" type="radio" name="captcha_type"
                                                        value="v2" id="captcha_type_1"
-                                                       @if(hwa_setting('captcha_type', 'v2') == 'v2') checked @endif>
+                                                       @if(hwa_setting('captcha_type', 'v2') === 'v2') checked @endif>
                                                 <label class="form-check-label" for="captcha_type_1">V2 (Verify requests
                                                     with a challenge)</label>
                                             </div>
                                             <div class="form-check mb-3 form-check-inline">
                                                 <input class="form-check-input" type="radio" name="captcha_type"
                                                        value="v3" id="captcha_type_2"
-                                                       @if(hwa_setting('captcha_type', 'v2') == 'v3') checked @endif>
+                                                       @if(hwa_setting('captcha_type', 'v2') === 'v3') checked @endif>
                                                 <label class="form-check-label" for="captcha_type_2">V3 (Verify requests
                                                     with a score)</label>
                                             </div>

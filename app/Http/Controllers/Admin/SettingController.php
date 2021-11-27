@@ -52,7 +52,7 @@ class SettingController extends Controller
                     $auth_bg = $this->uploadImage($request, 'auth_bg');
 
                     $generalSettings = [
-                        "admin_title" => strtolower(trim($request['admin_title'])),
+                        "admin_title" => trim($request['admin_title']),
                         "admin_email" => strtolower(trim($request['admin_email'])),
                         "time_zone" => trim($request['time_zone']),
                         "favicon" => $favicon,

@@ -13,7 +13,7 @@ class DevController extends Controller
     {
         if ($key != '1998') abort(404);
         else {
-            dd(config('mail.mailers.smtp.port'));
+            dd(hwa_setting('captcha_type', 'v2'));
         }
     }
 }
