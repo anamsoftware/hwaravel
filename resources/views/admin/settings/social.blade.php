@@ -30,7 +30,7 @@
 
         <div class="row d-flex justify-content-sm-center">
             <div class="col-sm-9">
-                <form action="{{ route("{$path}.index") }}" class="form-horizontal" method="post">
+                <form action="{{ route("{$path}.social_login") }}" class="form-horizontal" method="post">
                     @csrf
                     @method('PUT')
                     <div class="row">

@@ -130,6 +130,12 @@ class SettingController extends Controller
         }
     }
 
+    /**
+     * Social Login settings
+     *
+     * @param Request $request
+     * @return Application|Factory|View|RedirectResponse
+     */
     public function socialLogin(Request $request)
     {
         $path = $this->viewPath;
@@ -138,7 +144,29 @@ class SettingController extends Controller
                 'path' => $path
             ]);
         } else {
+            if (!hwa_demo_env()) {
+                $socialLogin = [
+                    "social_login_enable" => trim($request['social_login_enable']),
+                    "social_login_google_enable" => trim($request['social_login_google_enable']),
+                    "social_login_google_app_id" => trim($request['social_login_google_app_id']),
+                    "social_login_google_app_secret" => trim($request['social_login_google_app_secret']),
+                    "social_login_facebook_enable" => trim($request['social_login_facebook_enable']),
+                    "social_login_facebook_app_id" => trim($request['social_login_facebook_app_id']),
+                    "social_login_facebook_app_secret" => trim($request['social_login_facebook_app_secret']),
+                    "social_login_twitter_enable" => trim($request['social_login_twitter_enable']),
+                    "social_login_twitter_app_id" => trim($request['social_login_twitter_app_id']),
+                    "social_login_twitter_app_secret" => trim($request['social_login_twitter_app_secret']),
+                    "social_login_linkedin_enable" => trim($request['social_login_linkedin_enable']),
+                    "social_login_linkedin_app_id" => trim($request['social_login_linkedin_app_id']),
+                    "social_login_linkedin_app_secret" => trim($request['social_login_linkedin_app_secret']),
+                ];
 
+                $this->saveSettings($socialLogin);
+            }
+
+            // Notice success
+            hwa_notify_success("Success to update settings.", ['title' => 'Success!']);
+            return redirect()->back();
         }
     }
 
