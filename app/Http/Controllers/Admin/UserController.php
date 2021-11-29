@@ -257,7 +257,7 @@ class UserController extends Controller
                 hwa_notify_error($validator->getMessageBag()->first(), ['title' => 'Error!']);
                 return redirect()->back()->withInput()->withErrors($validator);
             } else {
-                if (auth()->guard('admin')->id() == $id) {
+                if (auth()->guard('admin')->id() == $id && $request['active'] != 1) {
                     // notify error
                     hwa_notify_error("Can't deactivate this user. This user is logged on!", ['title' => 'Error!']);
                     return redirect()->back()->withInput();
