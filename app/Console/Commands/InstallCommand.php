@@ -49,11 +49,6 @@ class InstallCommand extends Command
         $this->info("Step: Import sample data...");
         $this->call('db:seed');
 
-        // Create new user
-        if ($this->confirm("Step: Do you want to add a new user?", false)) {
-            $this->call('hwa:user:create');
-        }
-
         $this->info('');
         $this->info('Success: Install hwaravel successfully!');
     }

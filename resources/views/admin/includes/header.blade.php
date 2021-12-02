@@ -5,10 +5,10 @@
             <div class="navbar-brand-box">
                 <a href="{{ route('admin.home') }}" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="assets/images/logo.png" alt="" height="32">
+                        <img src="{{ !empty(hwa_setting('admin_logo_small')) ? hwa_image_url('system', hwa_setting('admin_logo_small')) : 'assets/images/logo.png'}}" alt="" height="32">
                     </span>
                     <span class="logo-lg">
-                        <img src="assets/images/logo-light.png" alt="" height="35">
+                        <img src="{{ !empty(hwa_setting('admin_logo')) ? hwa_image_url('system', hwa_setting('admin_logo')) : 'assets/images/logo-light.png'}}" alt="" height="35">
                     </span>
                 </a>
             </div>

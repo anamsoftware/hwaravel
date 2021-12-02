@@ -7,7 +7,7 @@
             <div class="row g-0">
 
                 <div class="col-xl-9">
-                    <div class="auth-full-bg pt-lg-5 p-4" style="background: url(assets/images/bg-auth.png) no-repeat center; background-size: cover; height: 100%;"></div>
+                    <div class="auth-full-bg pt-lg-5 p-4" style="background: url({{ !empty(hwa_setting('auth_bg')) ? hwa_image_url('system', hwa_setting('auth_bg')) : 'assets/images/bg-auth.png' }}) no-repeat center; background-size: cover; height: 100%;"></div>
                 </div>
                 <!-- end col -->
                 <div class="col-xl-3">

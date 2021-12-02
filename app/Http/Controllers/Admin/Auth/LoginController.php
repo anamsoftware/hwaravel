@@ -126,6 +126,6 @@ class LoginController extends Controller
 
         // Redirect to login page
         hwa_notify_success("Logout successfully.", ['title' => 'Success!', 'top' => true]);
-        return redirect()->route("{$this->viewPath}.logout");
+        return redirect()->route("{$this->viewPath}.login");
     }
 }

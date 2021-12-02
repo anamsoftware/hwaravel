@@ -15,13 +15,13 @@ class UserSeeder extends Seeder
     public function run()
     {
         User::updateOrCreate([
-            'email' => 'admin@hwaravel.abc'
+            'email' => 'admin@' . hwa_app_domain(),
         ], [
             'first_name' => 'Super',
             'last_name' => 'Admin',
             'full_name' => 'Super Admin',
             'username' => 'admin',
-            'email' => 'admin@hwaravel.abc',
+            'email' => 'admin@' . hwa_app_domain(),
             'email_verified_at' => now(),
             'password' => bcrypt('admin123'),
             'active' => 1,
