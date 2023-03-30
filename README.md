@@ -40,7 +40,7 @@ From Version 5.0
 
 ## Installation & configuration:
 
-**Step1: Install last version S-cart**
+**Step1: Install last version Hwaravel**
 
 Option 1: **From composer**
 ```
